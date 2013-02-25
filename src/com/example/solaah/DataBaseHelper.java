@@ -1,4 +1,4 @@
-package com.codekraft.data;
+package com.example.solaah;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -6,23 +6,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-public class SQLDbAdapter extends SQLiteOpenHelper {
+public class DataBaseHelper extends SQLiteOpenHelper {
+	private static String DB_PATH = "/data/data/com.example.solaah/databases/";
 
-	private static String DB_PATH = "/data/data/com.codekraft.solaah/databases/";
-	private static String DB_NAME = "prayertimes.db";
+	private static String DB_NAME = "db";
+
 	private SQLiteDatabase myDataBase;
-	private final Context myContext;
 
-	private static final int DATABASE_VERSION = 1;
-	private static final String TAG = "sqldbadapter";
-	private static final String PRAYER_TIMES_TABLE = "prayertimes";
+	private final Context myContext;
 
 	/**
 	 * Constructor Takes and keeps a reference of the passed context in order to
@@ -30,8 +26,8 @@ public class SQLDbAdapter extends SQLiteOpenHelper {
 	 * 
 	 * @param context
 	 */
-	public SQLDbAdapter(Context context) {
-		super(context, DB_NAME, null, DATABASE_VERSION);
+	public DataBaseHelper(Context context) {
+		super(context, DB_NAME, null, 1);
 		this.myContext = context;
 	}
 
@@ -39,7 +35,7 @@ public class SQLDbAdapter extends SQLiteOpenHelper {
 	 * Creates a empty database on the system and rewrites it with your own
 	 * database.
 	 * */
-	private void createDataBase() throws IOException {
+	public void createDataBase() throws IOException {
 
 		boolean dbExist = checkDataBase();
 
@@ -86,7 +82,7 @@ public class SQLDbAdapter extends SQLiteOpenHelper {
 	/**
 	 * Copies your database from your local assets-folder to the just created
 	 * empty database in the system folder, from where it can be accessed and
-	 * handled. This is done by transferring bytestream.
+	 * handled. This is done by transfering bytestream.
 	 * */
 	private void copyDataBase() throws IOException {
 
@@ -123,7 +119,7 @@ public class SQLDbAdapter extends SQLiteOpenHelper {
 
 	@Override
 	public synchronized void close() {
-		if (myDataBase != null) {
+		if (myDataBase != null){
 			myDataBase.close();
 		}
 		super.close();
@@ -131,40 +127,14 @@ public class SQLDbAdapter extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0) {
-		try {
-			createDataBase();			
-		} catch (IOException e) {
-			Log.e("Error creating database", e.toString());
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		try {
-			createDataBase();
-		} catch (IOException e) {
-			Log.e("Error upgrading database", e.toString());
-		}
-	}
 
-	/**
-	 * Gets the times for a particular date
-	 * 
-	 * @param date
-	 *            The date to retrieve times for; format is 2-Feb
-	 * */
-	public Cursor getTimingsForDate(String date) {
-		String sql = "SELECT * FROM " + PRAYER_TIMES_TABLE + " WHERE date == " + date; 
-		
-		SQLiteDatabase d = getReadableDatabase();
-		Cursor c = d.rawQuery(sql, null);
-
-		if (c.getCount() > 0) {
-			return c;
-		}
-		
-		return null;
 	}
 
 }
